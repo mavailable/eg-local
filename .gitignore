@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Node / front
+node_modules/
+dist/
+build/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Autres
+.env
