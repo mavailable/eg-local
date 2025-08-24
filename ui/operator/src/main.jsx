@@ -2,7 +2,14 @@ import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 
 function App() {
-  const base = `${location.protocol}//${location.hostname}:8000`;
+  // Configuration API avec priorité : URL param > variable d'env > fallback
+  const apiHost = new URLSearchParams(location.search).get("api_host") || 
+                  import.meta.env.VITE_API_HOST || 
+                  location.hostname;
+  const apiPort = parseInt(new URLSearchParams(location.search).get("api_port") || 
+                          import.meta.env.VITE_API_PORT || 
+                          "8000");
+  const base = `${location.protocol}//${apiHost}:${apiPort}`;
   const [mode, setMode] = useState("day");
   const [step, setStep] = useState(1);
   const [question, setQuestion] = useState("Choix ?");
@@ -18,6 +25,7 @@ function App() {
   return (
     <div style={{ maxWidth: 540, margin: "20px auto", fontFamily: "system-ui, sans-serif" }}>
       <h2>Operator Panel</h2>
+      <p><b>API:</b> {base}</p>
       <div style={{ border: "1px solid #ddd", padding: 12, marginBottom: 12 }}>
         <h3>Mode</h3>
         <select value={mode} onChange={(e)=>setMode(e.target.value)}>

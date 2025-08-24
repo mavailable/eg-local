@@ -13,3 +13,4 @@ __pycache__/
 
 # Autres
 .env
+mosquitto/data/mosquitto.db

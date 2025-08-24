@@ -5,6 +5,17 @@ import { connectMQTT, Message } from "./mqtt";
 function App() {
   const params = new URLSearchParams(location.search);
   const deviceId = params.get("id") || "change-01";
+  
+  // Configuration MQTT avec priorité : URL param > variable d'env > fallback
+  const mqttHost = params.get("mqtt_host") || 
+                   import.meta.env.VITE_MQTT_HOST || 
+                   location.hostname;
+  const mqttPort = parseInt(params.get("mqtt_port") || 
+                           import.meta.env.VITE_MQTT_PORT || 
+                           "9001");
+  const mqttPath = params.get("mqtt_path") || 
+                   import.meta.env.VITE_MQTT_PATH || 
+                   "/mqtt";
   const [payouts, setPayouts] = useState([]);
   const [tagUid, setTagUid] = useState("");
   const [lastRes, setLastRes] = useState(null);
@@ -12,7 +23,12 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      const client = await connectMQTT({ host: location.hostname, port: 9001, path: "/mqtt", clientId: deviceId + "-ui" });
+      const client = await connectMQTT({ 
+        host: mqttHost, 
+        port: mqttPort, 
+        path: mqttPath, 
+        clientId: deviceId + "-ui" 
+      });
       clientRef.current = client;
       client.subscribe("eg/dev/change-01/payouts");
       client.subscribe(`eg/dev/${deviceId}/res`);

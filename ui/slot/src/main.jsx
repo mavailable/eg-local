@@ -5,6 +5,17 @@ import { connectMQTT, Message } from "./mqtt";
 function App() {
   const params = new URLSearchParams(location.search);
   const deviceId = params.get("id") || "slot-01";
+  
+  // Configuration MQTT avec priorité : URL param > variable d'env > fallback
+  const mqttHost = params.get("mqtt_host") || 
+                   import.meta.env.VITE_MQTT_HOST || 
+                   location.hostname;
+  const mqttPort = parseInt(params.get("mqtt_port") || 
+                           import.meta.env.VITE_MQTT_PORT || 
+                           "9001");
+  const mqttPath = params.get("mqtt_path") || 
+                   import.meta.env.VITE_MQTT_PATH || 
+                   "/mqtt";
   const [mode, setMode] = useState("day");
   const [balance, setBalance] = useState(null);
   const [step, setStep] = useState(null);
@@ -15,7 +26,12 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      const client = await connectMQTT({ host: location.hostname, port: 9001, path: "/mqtt", clientId: deviceId + "-ui" });
+      const client = await connectMQTT({ 
+        host: mqttHost, 
+        port: mqttPort, 
+        path: mqttPath, 
+        clientId: deviceId + "-ui" 
+      });
       clientRef.current = client;
 
       client.subscribe("eg/state/mode");
@@ -53,6 +69,7 @@ function App() {
     <div style={{ maxWidth: 520, margin: "20px auto", fontFamily: "system-ui, sans-serif" }}>
       <h2>Slot UI — {deviceId}</h2>
       <p><b>Mode:</b> {mode}</p>
+      <p><b>MQTT:</b> {mqttHost}:{mqttPort}{mqttPath}</p>
       <div>
         <label>Tag UID: </label>
         <input value={tagUid} onChange={(e)=>setTagUid(e.target.value.trim().toUpperCase())} placeholder="04A37C91" />
