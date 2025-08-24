@@ -1,7 +1,13 @@
-device_id: "slot-01"
+device_id: "${SLOT_ID:-slot-01}"
 mqtt:
-  host: "192.168.1.27"
+  host: "${CORE_HOST:-192.168.1.27}"
   port: 1883
-dev_mode: true
-bet_amount_cents: 200
-credit_amount_cents: 500
+dev_mode: ${DEV_MODE:-true}
+bet_amount_cents: ${BET_AMOUNT_CENTS:-200}
+credit_amount_cents: ${CREDIT_AMOUNT_CENTS:-500}
+gpio:
+  button_pins: [5, 6, 22, 23, 17, 16]
+  led_pins: [18, 19, 20, 21, 12, 13]
+rfid:
+  port: "${RFID_PORT:-/dev/ttyUSB0}"
+  baudrate: ${RFID_BAUDRATE:-9600}

@@ -111,25 +111,9 @@ function App() {
           setInputStatus(payload.status || "disconnected");
         }
       };
+      };
     })();
   }, []);
-
-  // Gestion des touches clavier dans l'interface web
-  useEffect(() => {
-    const handleKeyPress = (event) => {
-      const key = event.key;
-      if (key >= '1' && key <= '6') {
-        const ledIndex = parseInt(key) - 1;
-        toggleLed(ledIndex);
-        event.preventDefault();
-      }
-    };
-    
-    document.addEventListener('keydown', handleKeyPress);
-    return () => {
-      document.removeEventListener('keydown', handleKeyPress);
-    };
-  }, [ledStates]);
 
   const pub = (topic, obj) => {
     const m = new Message(JSON.stringify(obj));
@@ -164,6 +148,23 @@ function App() {
       tag_uid: testTag
     });
   };
+
+  // Gestion des touches clavier dans l'interface web
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      const key = event.key;
+      if (key >= '1' && key <= '6') {
+        const ledIndex = parseInt(key) - 1;
+        toggleLed(ledIndex);
+        event.preventDefault();
+      }
+    };
+    
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [ledStates]);
 
   return (
     <div style={{ maxWidth: 640, margin: "20px auto", fontFamily: "system-ui, sans-serif" }}>

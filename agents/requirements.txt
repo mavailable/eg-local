@@ -1,0 +1,11 @@
+# Dépendances pour les agents avec gestion GPIO, clavier et RFID
+paho-mqtt==2.1.0
+pyyaml==6.0.1
+# GPIO pour Raspberry Pi
+RPi.GPIO==0.7.1
+# Gestion des événements clavier
+evdev==1.7.0
+# Communication série pour RFID
+pyserial-asyncio==0.6
+# Logs
+logging

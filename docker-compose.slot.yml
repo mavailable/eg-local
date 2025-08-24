@@ -1,0 +1,38 @@
+version: "3.9"
+services:
+  # Interface slot locale
+  slot-ui:
+    build: 
+      context: ./ui/slot
+      dockerfile: Dockerfile.prod
+    container_name: eg-slot-ui-${SLOT_ID:-01}
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_MQTT_HOST=${CORE_HOST:-192.168.1.27}
+      - VITE_MQTT_PORT=9001
+      - VITE_DEVICE_ID=${SLOT_ID:-slot-01}
+    networks:
+      - slot-network
+
+  # Interface de changement de billets (optionnel)
+  change-ui:
+    build: 
+      context: ./ui/change
+      dockerfile: Dockerfile.prod
+    container_name: eg-change-ui-${SLOT_ID:-01}
+    restart: unless-stopped
+    ports:
+      - "5174:5173"
+    environment:
+      - VITE_MQTT_HOST=${CORE_HOST:-192.168.1.27}
+      - VITE_MQTT_PORT=9001
+    networks:
+      - slot-network
+    profiles:
+      - change
+
+networks:
+  slot-network:
+    driver: bridge

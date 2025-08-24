@@ -1,0 +1,57 @@
+version: "3.9"
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: eg-mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"    # MQTT
+      - "9001:9001"    # WebSocket MQTT
+    volumes:
+      - ./mosquitto/conf:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+    networks:
+      - eg-network
+
+  core:
+    build: ./core
+    container_name: eg-core
+    restart: unless-stopped
+    environment:
+      - MQTT_HOST=mosquitto
+      - MQTT_PORT=1883
+      - CORE_DEVICE_ID=core-01
+      - DB_PATH=/data/eg.db
+      - NIGHT_EXPECTED_VOTES=9
+    depends_on:
+      - mosquitto
+    ports:
+      - "8000:8000"    # API Core
+    volumes:
+      - core-data:/data
+    networks:
+      - eg-network
+
+  # Interface web centralisée pour l'opérateur
+  operator-ui:
+    build: 
+      context: ./ui/operator
+      dockerfile: Dockerfile.prod
+    container_name: eg-operator-ui
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_MQTT_HOST=localhost
+      - VITE_MQTT_PORT=9001
+    depends_on:
+      - mosquitto
+    networks:
+      - eg-network
+
+volumes:
+  core-data:
+
+networks:
+  eg-network:
+    driver: bridge
