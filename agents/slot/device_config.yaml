@@ -1,6 +1,6 @@
 device_id: "slot-01"
 mqtt:
-  host: "127.0.0.1"
+  host: "192.168.1.27"
   port: 1883
 dev_mode: true
 bet_amount_cents: 200
